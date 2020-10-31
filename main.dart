@@ -30,15 +30,15 @@ Future<List<Flower>> GetData() async {
 }
 
 void main() {
-  Flower testFlower = Flower(5, 8, 5, 5, null);
+  Flower testFlower = Flower(5, 8, 5, 5, "???");
   Future<List<Flower>> flowers = GetData();
   List<KAnalyzer> kValues = [];
   for (var i = 2; i < 11; i++) {
     kValues.add(KAnalyzer(i));
   }
 
-  flowers.then((value) {
-    TrainingSet splitData = getTestData(value);
+  flowers.then((data) {
+    TrainingSet splitData = getTestData(data);
 
     kValues.forEach((kValue) {
       testK(kValue, splitData);
@@ -51,6 +51,6 @@ void main() {
     print(
         "The optimum K is ${winner.k} with a pass rate of ${winner.passRate()}");
 
-    classify(testFlower, winner.k, value);
+    classify(testFlower, winner.k, data);
   }).then((value) => testFlower.describe());
 }

@@ -20,11 +20,13 @@ class Flower {
         this.classification = Species.virginica;
         break;
       default:
+        this.classification = Species.undefined;
+        break;
     }
   }
 
   void describe() {
-    print(this.classification ?? "undefined");
+    print(this.classification);
   }
 }
 
