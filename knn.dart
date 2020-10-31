@@ -1,67 +1,52 @@
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:async';
-import 'dart:convert';
+import 'dart:math';
+import 'types.dart';
 
-enum Species {setosa, versicolor, virginica}
+void classify(Flower f, int k, List<Flower> data) {
+  List<DataPoint> nearest_neighbours = getNearestNeighbours(f, k, data);
+  f.classification = getClassification(nearest_neighbours);
+}
 
-class Flower {
-  double sepal_length;
-  double sepal_width;
-  double petal_length;
-  double petal_width;
-  Species classification;
+double getEuclideanDistance(Flower a, Flower b) {
+  return sqrt((pow((a.petal_length - b.petal_length), 2)) +
+      (pow((a.petal_width - b.petal_width), 2)) +
+      (pow((a.sepal_length - b.sepal_length), 2)) +
+      (pow((a.sepal_width - b.sepal_width), 2)));
+}
 
-  Flower(this.sepal_length,this.sepal_width,this.petal_length,this.petal_width,String species) {
-    switch (species) {
-      case "Iris-setosa": 
-        this.classification = Species.setosa;
+List<DataPoint> getNearestNeighbours(Flower f, int k, List<Flower> data) {
+  List<DataPoint> distances = data.map((e) {
+    return DataPoint(e, getEuclideanDistance(f, e));
+  }).toList();
+
+  distances.sort((a, b) => Comparable.compare(a.distance, b.distance));
+
+  return distances.sublist(0, (k - 1));
+}
+
+Species getClassification(List<DataPoint> neighbours) {
+  var tally = {Species.setosa: 0, Species.versicolor: 0, Species.virginica: 0};
+  neighbours.forEach((element) {
+    switch (element.flower.classification) {
+      case Species.setosa:
+        tally[Species.setosa] += 1;
         break;
-      case "Iris-versicolor":
-        this.classification = Species.versicolor;
+      case Species.versicolor:
+        tally[Species.versicolor] += 1;
         break;
-      case "Iris-virginica":
-        this.classification = Species.virginica;
+      case Species.virginica:
+        tally[Species.virginica] += 1;
         break;
       default:
     }
-  }
+  });
 
-  void describe() {
-    print(this.classification ?? "undefined");
-  }
-}
+  Species verdict;
+  int winner = 0;
+  tally.forEach((key, value) {
+    if (value > winner) {
+      verdict = key;
+    }
+  });
 
-Future<List<Flower>> GetData() async {
-  var file = File("./IRIS.csv");
-  List<Flower> data = [];
-
-  final raw = file.readAsString();
-  await raw.then((contents) {
-    LineSplitter ls = new LineSplitter();
-    List<String> lines = ls.convert(contents);
-    lines.removeAt(0);
-    lines.forEach((element) {
-      List row = element.split(',');
-      double sl = double.parse(row[0]);
-      double sw = double.parse(row[1]);
-      double pl = double.parse(row[2]);
-      double pw = double.parse(row[3]);
-      String type = row[4];
-
-      data.add(Flower(sl,sw,pl,pw,type));      
-    });
-  }); 
-
-  return data;
-}
-
-void main(){
-  Flower a = Flower(5.1,3.5,1.4,0.2,"Iris-setosa");
-  Flower b = Flower(4.9,3,1.4,0.2,"bumhole");
-  a.describe();
-  b.describe();
-
-  Future<List<Flower>> flowers = GetData();
-  flowers.then((value) => value[97].describe());
+  return verdict;
 }
