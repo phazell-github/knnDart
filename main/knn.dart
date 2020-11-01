@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'types.dart';
 
-void classify(Datum flower, int k, List<Datum> data) {
-  List<DataPoint> nearest_neighbours = getNearestNeighbours(flower, k, data);
-  flower.classification = getClassification(nearest_neighbours);
+void classify(Datum datum, int k, List<Datum> data) {
+  List<DataPoint> nearest_neighbours = getNearestNeighbours(datum, k, data);
+  datum.classification = getClassification(nearest_neighbours);
 }
 
 double getEuclideanDistance(Datum a, Datum b) {
