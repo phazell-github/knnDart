@@ -1,11 +1,11 @@
 import 'types.dart';
 import 'knn.dart';
 
-TrainingSet getTestData(List<Flower> rawData) {
+TrainingSet getTestData(List<Datum> rawData) {
   rawData.shuffle();
   int splitAt = ((rawData.length) / 10).floor().toInt();
 
-  List<Flower> test = rawData.getRange(0, splitAt).toList();
+  List<Datum> test = rawData.getRange(0, splitAt).toList();
   rawData.removeRange(0, splitAt);
 
   return TrainingSet(test, rawData);
@@ -13,8 +13,8 @@ TrainingSet getTestData(List<Flower> rawData) {
 
 void testK(KAnalyzer kAnalyzer, TrainingSet trainingSet) {
   trainingSet.test.forEach((flower) {
-    Species real = flower.classification;
-    flower.classification = Species.undefined;
+    String real = flower.classification;
+    flower.classification = "undefined";
 
     classify(flower, kAnalyzer.k, trainingSet.train);
 
@@ -28,7 +28,7 @@ void testK(KAnalyzer kAnalyzer, TrainingSet trainingSet) {
 
 KAnalyzer getOptimumK(List<KAnalyzer> candidates) {
   return candidates.fold(candidates[0], (previousValue, element) {
-    if (previousValue.passRate() > element.passRate()) {
+    if (previousValue.passRate() >= element.passRate()) {
       return previousValue;
     } else {
       return element;

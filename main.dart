@@ -5,9 +5,9 @@ import 'types.dart';
 import 'knn.dart';
 import 'optimise.dart';
 
-Future<List<Flower>> GetData() async {
+Future<List<Datum>> GetData() async {
   var file = File("./IRIS.csv");
-  List<Flower> data = [];
+  List<Datum> data = [];
 
   final raw = file.readAsString();
   await raw.then((contents) {
@@ -16,13 +16,16 @@ Future<List<Flower>> GetData() async {
     lines.removeAt(0);
     lines.forEach((element) {
       List row = element.split(',');
+
+      // *** Specific to csv ***
       double sl = double.parse(row[0]);
       double sw = double.parse(row[1]);
       double pl = double.parse(row[2]);
       double pw = double.parse(row[3]);
       String type = row[4];
 
-      data.add(Flower(sl, sw, pl, pw, type));
+      data.add(Datum([sl, sw, pl, pw], type));
+      // ************************
     });
   });
 
@@ -30,15 +33,16 @@ Future<List<Flower>> GetData() async {
 }
 
 void main() {
-  Flower testFlower = Flower(5, 8, 5, 5, "???");
-  Future<List<Flower>> flowers = GetData();
+  Datum testSubject = Datum([5, 8, 5, 5], "???");
+
+  Future<List<Datum>> data = GetData();
   List<KAnalyzer> kValues = [];
   for (var i = 2; i < 11; i++) {
     kValues.add(KAnalyzer(i));
   }
 
-  flowers.then((data) {
-    TrainingSet splitData = getTestData(data);
+  data.then((d) {
+    TrainingSet splitData = getTestData(d);
 
     kValues.forEach((kValue) {
       testK(kValue, splitData);
@@ -51,6 +55,6 @@ void main() {
     print(
         "The optimum K is ${winner.k} with a pass rate of ${winner.passRate()}");
 
-    classify(testFlower, winner.k, data);
-  }).then((value) => testFlower.describe());
+    classify(testSubject, winner.k, d);
+  }).then((value) => print(testSubject.classification));
 }

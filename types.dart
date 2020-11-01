@@ -1,39 +1,13 @@
-enum Species { setosa, versicolor, virginica, undefined }
-
-class Flower {
-  double sepal_length;
-  double sepal_width;
-  double petal_length;
-  double petal_width;
-  Species classification;
-
-  Flower(this.sepal_length, this.sepal_width, this.petal_length,
-      this.petal_width, String species) {
-    switch (species) {
-      case "Iris-setosa":
-        this.classification = Species.setosa;
-        break;
-      case "Iris-versicolor":
-        this.classification = Species.versicolor;
-        break;
-      case "Iris-virginica":
-        this.classification = Species.virginica;
-        break;
-      default:
-        this.classification = Species.undefined;
-        break;
-    }
-  }
-
-  void describe() {
-    print(this.classification);
-  }
+class DataPoint {
+  Datum datum;
+  double distance;
+  DataPoint(this.datum, this.distance);
 }
 
-class DataPoint {
-  Flower flower;
-  double distance;
-  DataPoint(this.flower, this.distance);
+class Datum {
+  List<double> dimensions;
+  String classification;
+  Datum(this.dimensions, this.classification);
 }
 
 class KAnalyzer {
@@ -60,7 +34,7 @@ class KAnalyzer {
 }
 
 class TrainingSet {
-  List<Flower> test;
-  List<Flower> train;
+  List<Datum> test;
+  List<Datum> train;
   TrainingSet(this.test, this.train);
 }
