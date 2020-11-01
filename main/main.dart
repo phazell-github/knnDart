@@ -6,7 +6,7 @@ import 'knn.dart';
 import 'optimise.dart';
 
 Future<List<Datum>> GetData() async {
-  var file = File("./IRIS.csv");
+  var file = File("../data/IRIS.csv");
   List<Datum> data = [];
 
   final raw = file.readAsString();

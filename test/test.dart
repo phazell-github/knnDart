@@ -1,5 +1,5 @@
-import '../knn.dart';
-import '../types.dart';
+import '../main/knn.dart';
+import '../main/types.dart';
 import 'package:test/test.dart';
 
 void main() {
