@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'getdata.dart';
-import 'types.dart';
-import 'knn.dart';
-import 'optimise.dart';
+import 'package:knn_dart/pages/landingPage.dart';
+import './logic/getdata.dart';
+import './logic/knn.dart';
+import './logic/optimise.dart';
+import './logic/types.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: DataInput(),
+      body: LandingPage(),
     );
   }
 }
