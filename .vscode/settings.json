@@ -1,0 +1,6 @@
+{
+    "editor.quickSuggestions": true,
+    "editor.suggestOnTriggerCharacters": true,
+    "dart.lineLength": 150,
+    "dart.webDaemonLogFile": null
+}
