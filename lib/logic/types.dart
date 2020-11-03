@@ -45,7 +45,14 @@ class HeadersData {
   String name;
   int value;
   bool isNumeric;
-  HeadersData(this.name,this.value){
+  HeadersData(this.name, this.value) {
     this.isNumeric = false;
+  }
+  flipBool() {
+    if (isNumeric) {
+      isNumeric = false;
+    } else {
+      isNumeric = true;
+    }
   }
 }

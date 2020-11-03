@@ -4,25 +4,25 @@ import 'dart:typed_data';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
-import 'package:knn_dart/pages/defineParameters.dart';
 import 'dart:io';
 import '../logic/types.dart';
-import '../logic/getdata.dart'; 
+import '../logic/getdata.dart';
 
 class LandingPage extends StatefulWidget {
   LandingPage({Key key}) : super(key: key);
-  
-  @override    
-  _LandingPage createState() => _LandingPage();  
+
+  @override
+  _LandingPage createState() => _LandingPage();
 }
 
 class _LandingPage extends State<LandingPage> {
   String _fileContents = 'Unknown';
-  List<HeadersData> _headers =[];
+  bool _enableButton = false;
+  List<HeadersData> _headers = [];
   List<DropdownMenuItem<HeadersData>> _dropDownItems = [];
   HeadersData _classificationColumn = HeadersData("Init", 0);
-  List<CheckboxListTile> _numericColumns = [];
- 
+  List<Row> _numericColumns = [];
+
   webFilePicker() async {
     html.InputElement uploadInput = html.FileUploadInputElement();
     uploadInput.multiple = false;
@@ -35,96 +35,116 @@ class _LandingPage extends State<LandingPage> {
       final reader = html.FileReader();
       reader.readAsText(file);
       reader.onLoadEnd.listen((e) {
-        setState(() {          
+        setState(() {
           _fileContents = reader.result.toString();
+          _enableButton = true;
         });
-       });
-     });
+      });
+    });
   }
 
-  moveToRunTest() {    
-    Navigator.push(
-      context, MaterialPageRoute(
-      builder: (context) => DefineParameters(this._fileContents,getHeadersData()),
-    ));    
-  }
+  // moveToRunTest() {
+  //   Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => DefineParameters(this._fileContents, getHeadersData()),
+  //       ));
+  // }
 
-  getParameters(){
+  getParameters() {
     setState(() {
       _headers = getHeadersData();
-      buildDropDownItems();  
+      buildDropDownItems();
+      buildCheckBoxes();
+      _enableButton = false;
     });
-    
-    //buildCheckBoxes();
   }
 
-  
-
-  buildDropDownItems() {       
-      _headers.forEach((h) { 
-      _dropDownItems.add(
-        DropdownMenuItem(child: Text(h.name),value: h)
-        );
-      });
-      _classificationColumn = _dropDownItems[0].value;     
+  buildCheckBoxes() {
+    for (var i = 0; i < _headers.length; i++) {
+      _numericColumns.add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(_headers[i].name),
+          StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) => Checkbox(
+              value: _headers[i].isNumeric,
+              onChanged: (value) {
+                setState(() {
+                  _headers[i].isNumeric = value;
+                });
+              },
+            ),
+          ),
+        ],
+      ));
+    }
   }
 
+  buildDropDownItems() {
+    _headers.forEach((h) {
+      _dropDownItems.add(DropdownMenuItem(child: Text(h.name), value: h));
+    });
+    _classificationColumn = _dropDownItems[0].value;
+  }
 
-  List<HeadersData> getHeadersData(){
+  List<HeadersData> getHeadersData() {
     List<HeadersData> output = [];
     List<String> headers = getHeaders(this._fileContents);
     for (var i = 0; i < headers.length; i++) {
-      output.add(
-        HeadersData(headers[i], i)
-      );
+      output.add(HeadersData(headers[i], i));
     }
     return output;
   }
 
-  @override  
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       body: Center(
-        child: Column(
-          children: [
-            Container(
+          child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
               // File Uploader
               child: MaterialButton(
                 color: Colors.lightBlueAccent,
                 elevation: 8,
                 highlightElevation: 2,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),                  
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 textColor: Colors.white,
                 child: Text("Select a file"),
                 onPressed: () => webFilePicker(),
               ),
             ),
-            Container(
-              child: MaterialButton(
-                color: Colors.lightBlueAccent,
-                elevation: 8,
-                highlightElevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),                  
-                ),
-                textColor: Colors.white,
-                child: Text("Get Parameters"),
-                onPressed: () => getParameters(),
-              )
-            ),
-            Row(
-              children: [
-                Text("Select Classification Column"),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.cyan,
-                    border: Border.all()
-                  ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+                child: MaterialButton(
+              color: Colors.lightBlueAccent,
+              elevation: 8,
+              highlightElevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              textColor: Colors.white,
+              child: Text("Show Parameters"),
+              onPressed: () => _enableButton ? getParameters() : null,
+            )),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Select Classification Column"),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: Colors.white54, border: Border.all()),
                   child: DropdownButtonHideUnderline(
-                    child: DropdownButton<HeadersData>(                
+                    child: DropdownButton<HeadersData>(
                       value: _classificationColumn,
                       items: _dropDownItems,
                       onChanged: (value) {
@@ -134,18 +154,16 @@ class _LandingPage extends State<LandingPage> {
                       },
                     ),
                   ),
-                ),                
-              ],
-            ),
-            Column(
-              children: [
-                Text("Select Numeric parameters;"),
-
-              ],
-            )
-          ],
-        )
-      ),
+                ),
+              ),
+            ],
+          ),
+          Column(children: [
+            Text("Select numeric columns for calculating distance"),
+            ..._numericColumns,
+          ]),
+        ],
+      )),
     );
   }
 }
