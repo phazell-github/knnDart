@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
+import 'package:knn_dart/pages/analysisPage.dart';
 import 'dart:io';
 import '../logic/types.dart';
 import '../logic/getdata.dart';
@@ -17,7 +18,7 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPage extends State<LandingPage> {
   String _fileContents = 'Unknown';
-  bool _enableButton = false;
+  bool _enableShowParamsButton = false;
   List<HeadersData> _headers = [];
   List<DropdownMenuItem<HeadersData>> _dropDownItems = [];
   HeadersData _classificationColumn = HeadersData("Init", 0);
@@ -37,26 +38,26 @@ class _LandingPage extends State<LandingPage> {
       reader.onLoadEnd.listen((e) {
         setState(() {
           _fileContents = reader.result.toString();
-          _enableButton = true;
+          _enableShowParamsButton = true;
         });
       });
     });
   }
 
-  // moveToRunTest() {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => DefineParameters(this._fileContents, getHeadersData()),
-  //       ));
-  // }
+  moveToAnalysis() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AnalysisPage(this._fileContents, this._classificationColumn, this._headers),
+        ));
+  }
 
   getParameters() {
     setState(() {
       _headers = getHeadersData();
       buildDropDownItems();
       buildCheckBoxes();
-      _enableButton = false;
+      _enableShowParamsButton = false;
     });
   }
 
@@ -132,7 +133,7 @@ class _LandingPage extends State<LandingPage> {
               ),
               textColor: Colors.white,
               child: Text("Show Parameters"),
-              onPressed: () => _enableButton ? getParameters() : null,
+              onPressed: () => _enableShowParamsButton ? getParameters() : null,
             )),
           ),
           Row(
@@ -162,6 +163,23 @@ class _LandingPage extends State<LandingPage> {
             Text("Select numeric columns for calculating distance"),
             ..._numericColumns,
           ]),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              // File Uploader
+              child: MaterialButton(
+                color: Colors.lightBlueAccent,
+                elevation: 8,
+                highlightElevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                textColor: Colors.white,
+                child: Text("Analysis Screen"),
+                onPressed: () => moveToAnalysis(),
+              ),
+            ),
+          )
         ],
       )),
     );

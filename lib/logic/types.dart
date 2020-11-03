@@ -48,11 +48,4 @@ class HeadersData {
   HeadersData(this.name, this.value) {
     this.isNumeric = false;
   }
-  flipBool() {
-    if (isNumeric) {
-      isNumeric = false;
-    } else {
-      isNumeric = true;
-    }
-  }
 }
