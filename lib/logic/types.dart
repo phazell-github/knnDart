@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class DataPoint {
   Datum datum;
   double distance;
@@ -37,4 +39,13 @@ class TrainingSet {
   List<Datum> test;
   List<Datum> train;
   TrainingSet(this.test, this.train);
+}
+
+class HeadersData {
+  String name;
+  int value;
+  bool isNumeric;
+  HeadersData(this.name,this.value){
+    this.isNumeric = false;
+  }
 }

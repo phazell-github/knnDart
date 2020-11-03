@@ -37,12 +37,13 @@ List<String> splitData(String input) {
   return ls.convert(input);
 }
 
-List<String> getHeaders(List<String> input) {
-  String headers = input[0];
+List<String> getHeaders(String input) {
+  String headers = splitData(input)[0];
   return headers.split(',');
 }
 
-List<Datum> getData(List<String> input, List<int> numerics, int classification) {
+List<Datum> getData(String data, List<int> numerics, int classification) {
+  List<String> input = splitData(data);
   List<Datum> output = [];
   input.removeAt(0);
   input.forEach((element) {
