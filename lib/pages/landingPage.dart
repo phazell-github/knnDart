@@ -132,7 +132,7 @@ class _LandingPage extends State<LandingPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               textColor: Colors.white,
-              child: Text("Show Parameters"),
+              child: Text("Define Parameters"),
               onPressed: () => _enableShowParamsButton ? getParameters() : null,
             )),
           ),
@@ -161,25 +161,12 @@ class _LandingPage extends State<LandingPage> {
           ),
           Column(children: [
             Text("Select numeric columns for calculating distance"),
-            ..._numericColumns,
-          ]),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              // File Uploader
-              child: MaterialButton(
-                color: Colors.lightBlueAccent,
-                elevation: 8,
-                highlightElevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                textColor: Colors.white,
-                child: Text("Analysis Screen"),
-                onPressed: () => moveToAnalysis(),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [..._numericColumns],
             ),
-          )
+          ]),
+          AnalysisPage(this._fileContents, this._classificationColumn, this._headers),
         ],
       )),
     );

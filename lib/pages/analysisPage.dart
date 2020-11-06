@@ -49,39 +49,45 @@ class _AnalysisPageState extends State<AnalysisPage> {
     Datum queryDatum = Datum(queryNums, "failed");
     classify(queryDatum, winner.k, datums);
     setState(() {
-      _result = queryDatum.classification;
+      _result = "The optimum K is ${winner.k} with a pass rate of ${winner.passRate()}\n\n" +
+          "Model predicts the following classification: \n" +
+          queryDatum.classification;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        body: Center(
-      child: Column(
-        children: [
-          Container(
+    return Column(
+      children: [
+        Container(
             child: TextField(
               controller: _predictData,
-              decoration: InputDecoration(hintText: 'Data for test sample eg: 12.3,34.5,5.0'),
+              decoration: InputDecoration(hintText: 'Prediction data eg: 12.3,34.5,5.0', border: const OutlineInputBorder(gapPadding: 4.0)),
               maxLength: null,
               maxLines: 1,
             ),
+            margin: const EdgeInsets.fromLTRB(20, 25, 20, 15)),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Container(
+            // File Uploader
+            child: MaterialButton(
+              color: Colors.lightBlueAccent,
+              elevation: 8,
+              highlightElevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              textColor: Colors.white,
+              child: Text("Predict Classification"),
+              onPressed: () => runKnn(),
+            ),
           ),
-          ButtonBar(
-            alignment: MainAxisAlignment.start,
-            children: [
-              Text("Run KNN Algorithm"),
-              RaisedButton(
-                onPressed: () => runKnn(),
-                child: Icon(Icons.calculate),
-              )
-            ],
-          ),
-          Container(
-            child: Text("Model predicts the following classification: $_result"),
-          )
-        ],
-      ),
-    ));
+        ),
+        Container(
+          child: Text(_result),
+        )
+      ],
+    );
   }
 }
